@@ -1,0 +1,14 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+summary:
+  types:
+  - http
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  description: 'API key provided as a Bearer token: `Authorization: Bearer <api_key>`. Get an
+    API key at https://platform.inceptionlabs.ai.'
+  sources:
+  - openapi/inception-labs-openapi-original.json
