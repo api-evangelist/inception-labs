@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Inception Chat Edit API
+  version: 1.0.0
+  description: Inception Labs LLM API — chat, FIM, and edit completions powered by Mercury diffusion language models. OpenAI-compatible request/response shapes with extensions for diffusion-specific features.
+  contact:
+    name: Inception Labs
+    url: https://docs.inceptionlabs.ai
+    email: support@inceptionlabs.ai
+  license:
+    name: Proprietary
+  x-logo:
+    url: https://docs.inceptionlabs.ai/logo.png
+servers:
+- url: https://api.inceptionlabs.ai
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Edit
+  description: Code edit completion endpoints.
+paths:
+  /v1/edit/completions:
+    post:
+      summary: Create a code edit completion
+      description: Generate an edit to a code region given the surrounding context. The request must contain a single user message whose content includes the required edit prompt tags (e.g. `<|code_to_edit|>`, `<|cursor|>`, `<|current_file_content|>`). Returns an `EditCompletion` object. Streaming and tool calling are not supported on this endpoint.
+      operationId: createEditCompletion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditCompletionRequest'
+            example:
+              model: mercury-edit-2
+              messages:
+              - role: user
+                content: "<|recently_viewed_code_snippets|>\n<|/recently_viewed_code_snippets|>\n<|edit_diff_history|>\n<|/edit_diff_history|>\n<|current_file_content|>\ndef greet(name):\n    print(\"hi\")\n<|/current_file_content|>\n<|code_to_edit|>\ndef greet(name):\n    print(\"hi\")<|cursor|>\n<|/code_to_edit|>"
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditCompletionResponse'
+              example:
+                id: cmpl-7a2b3c4d5e
+                object: edit.completion
+                created: 1745798400
+                model: mercury-edit-2
+                choices:
+                - index: 0
+                  finish_reason: stop
+                  message:
+                    role: assistant
+                    content: "def greet(name):\n    print(f\"hi {name}\")\n"
+                usage:
+                  prompt_tokens: 156
+                  completion_tokens: 18
+                  total_tokens: 174
+                  reasoning_tokens: 0
+                  cached_input_tokens: 0
+        '400':
+          description: Bad Request — invalid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+                  type: invalid_request_error
+                  param: messages
+                  code: context_length_exceeded
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '402':
+          description: Payment Required — billing inactive or quota exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Account is inactive
+                  type: account_error
+                  param: null
+                  code: account_error
+        '404':
+          description: Not Found — model not available for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: model `jupyter-2` not found
+                  type: invalid_request_error
+                  param: model
+                  code: model_not_found
+        '429':
+          description: Too Many Requests — rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Rate limit exceeded. Please try again later.
+                  type: rate_limit_error
+                  param: null
+                  code: rate_limit_reached
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - Edit
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nedit_completion = client.edit.completions.create(\n    model=\"mercury-edit-2\",\n    messages=[\n        {\n            \"role\": \"user\",\n            \"content\": \"<|recently_viewed_code_snippets|>\\n<|/recently_viewed_code_snippets|>\\n<|edit_diff_history|>\\n<|/edit_diff_history|>\\n<|current_file_content|>\\ndef greet(name):\\n    print(\\\"hi\\\")\\n<|/current_file_content|>\\n<|code_to_edit|>\\ndef greet(name):\\n    print(\\\"hi\\\")<|cursor|>\\n<|/code_to_edit|>\"\n        }\n    ],\n)\nprint(edit_completion)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst editCompletion = await client.edit.completions.create({\n  model: 'mercury-edit-2',\n  messages: [\n    {\n      role: 'user',\n      content: '<|recently_viewed_code_snippets|>\\n<|/recently_viewed_code_snippets|>\\n<|edit_diff_history|>\\n<|/edit_diff_history|>\\n<|current_file_content|>\\ndef greet(name):\\n    print(\"hi\")\\n<|/current_file_content|>\\n<|code_to_edit|>\\ndef greet(name):\\n    print(\"hi\")<|cursor|>\\n<|/code_to_edit|>'\n    }\n  ]\n});\nconsole.log(editCompletion);"
+components:
+  schemas:
+    EditUsage:
+      properties:
+        prompt_tokens:
+          type: integer
+          title: Prompt Tokens
+        reasoning_tokens:
+          type: integer
+          title: Reasoning Tokens
+        completion_tokens:
+          type: integer
+          title: Completion Tokens
+        total_tokens:
+          type: integer
+          title: Total Tokens
+        cached_input_tokens:
+          type: integer
+          title: Cached Input Tokens
+      type: object
+      required:
+      - prompt_tokens
+      - reasoning_tokens
+      - completion_tokens
+      - total_tokens
+      - cached_input_tokens
+      title: EditUsage
+      description: Usage for edit completions.
+    EditMessage:
+      properties:
+        role:
+          type: string
+          const: assistant
+          title: Role
+          description: Edit responses are always from the assistant.
+          default: assistant
+        content:
+          anyOf:
+          - type: string
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Content
+          description: The model's edit output.
+      type: object
+      title: EditMessage
+      description: Edit response message. The model always responds as the assistant.
+      required:
+      - role
+    EditMessageParam:
+      properties:
+        role:
+          type: string
+          const: user
+          title: Role
+          description: Edit requests only accept user messages.
+          default: user
+        content:
+          anyOf:
+          - type: string
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          title: Content
+          description: The content of the edit request. Must contain the required edit prompt tags.
+      type: object
+      required:
+      - content
+      - role
+      title: EditMessageParam
+      description: Edit request message. Edit endpoints only accept a single user message.
+    ErrorResponse:
+      type: object
+      title: ErrorResponse
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorObject'
+      example:
+        error:
+          message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+          type: invalid_request_error
+          param: messages
+          code: context_length_exceeded
+    EditChoice:
+      properties:
+        index:
+          type: integer
+          title: Index
+        message:
+          $ref: '#/components/schemas/EditMessage'
+        finish_reason:
+          type:
+          - string
+          - 'null'
+          enum:
+          - stop
+          - length
+          - content_filter
+          - null
+          description: The reason the model stopped generating tokens.
+      type: object
+      required:
+      - index
+      - message
+      - finish_reason
+      title: EditChoice
+      description: Choice for edit completions.
+    EditCompletionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: edit.completion
+          title: Object
+          default: edit.completion
+        created:
+          type: integer
+          title: Created
+        model:
+          type: string
+          title: Model
+        choices:
+          items:
+            $ref: '#/components/schemas/EditChoice'
+          type: array
+          title: Choices
+        usage:
+          $ref: '#/components/schemas/EditUsage'
+        warning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warning
+      type: object
+      required:
+      - id
+      - created
+      - model
+      - choices
+      - usage
+      - object
+      title: EditCompletionResponse
+      example:
+        id: cmpl-7a2b3c4d5e
+        object: edit.completion
+        created: 1745798400
+        model: mercury-edit-2
+        choices:
+        - index: 0
+          finish_reason: stop
+          message:
+            role: assistant
+            content: "def greet(name):\n    print(f\"hi {name}\")\n"
+        usage:
+          prompt_tokens: 156
+          completion_tokens: 18
+          total_tokens: 174
+          reasoning_tokens: 0
+          cached_input_tokens: 0
+    EditCompletionRequest:
+      properties:
+        messages:
+          items:
+            $ref: '#/components/schemas/EditMessageParam'
+          type: array
+          title: Messages
+        model:
+          type: string
+          title: Model
+          description: The model to use for the edit completion.
+        max_tokens:
+          type: integer
+          title: Max Tokens
+          description: Maximum number of tokens to generate.
+          default: 1024
+          minimum: 1
+          maximum: 8192
+        temperature:
+          type: number
+          title: Temperature
+          description: What sampling temperature to use, between 0 and 2. Higher values make the output more random; lower values make it more focused and deterministic.
+          default: 0.2
+          minimum: 0.0
+          maximum: 2.0
+        top_p:
+          type: number
+          title: Top P
+          description: Float that controls the cumulative probability of the top tokens to consider.
+          default: 1.0
+          minimum: 0.0
+          maximum: 1.0
+        presence_penalty:
+          type: number
+          title: Presence Penalty
+          description: Number between -2 and 2. Positive values penalize tokens based on whether they have appeared in the text so far, increasing the model's likelihood to talk about new topics.
+          default: 1.0
+          minimum: -2.0
+          maximum: 2.0
+      type: object
+      required:
+      - messages
+      - model
+      title: EditCompletionRequest
+    ErrorObject:
+      type: object
+      title: ErrorObject
+      required:
+      - message
+      - type
+      properties:
+        message:
+          type: string
+          description: Human-readable error message.
+        type:
+          type: string
+          description: Error category, e.g. `invalid_request_error`, `rate_limit_error`.
+        param:
+          type:
+          - string
+          - 'null'
+          description: Offending parameter, if applicable.
+        code:
+          type:
+          - string
+          - 'null'
+          description: Machine-readable error code.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'API key provided as a Bearer token: `Authorization: Bearer <api_key>`. Get an API key at https://platform.inceptionlabs.ai.'

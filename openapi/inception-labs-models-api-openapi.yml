@@ -1,0 +1,530 @@
+openapi: 3.1.0
+info:
+  title: Inception Chat Models API
+  version: 1.0.0
+  description: Inception Labs LLM API — chat, FIM, and edit completions powered by Mercury diffusion language models. OpenAI-compatible request/response shapes with extensions for diffusion-specific features.
+  contact:
+    name: Inception Labs
+    url: https://docs.inceptionlabs.ai
+    email: support@inceptionlabs.ai
+  license:
+    name: Proprietary
+  x-logo:
+    url: https://docs.inceptionlabs.ai/logo.png
+servers:
+- url: https://api.inceptionlabs.ai
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Models
+  description: List available models.
+paths:
+  /v1/models:
+    get:
+      summary: List available models
+      description: List the models currently available through the API.
+      operationId: listModels
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+              example:
+                data:
+                - id: mercury-2
+                  name: 'Inception: Mercury 2'
+                  created: 1745798400
+                  description: Mercury 2 diffusion language model for chat completions.
+                  input_modalities:
+                  - text
+                  output_modalities:
+                  - text
+                  context_length: 128000
+                  max_output_length: 50000
+                  pricing:
+                    prompt: '0.00000025'
+                    completion: '0.00000075'
+                    input_cache_reads: '0.000000025'
+                    input_cache_writes: '0'
+                  supported_sampling_parameters:
+                  - temperature
+                  - stop
+                  supported_features:
+                  - tools
+                  - json_mode
+                  - structured_outputs
+                  openrouter:
+                    slug: inception/mercury-2
+                  datacenters:
+                  - country_code: US
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - Models
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nmodels = client.models.list()\nprint(models)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst models = await client.models.list();\nconsole.log(models);"
+  /v1/chat/completions/models:
+    get:
+      summary: List chat models
+      description: List models available for chat completions.
+      operationId: listChatModels
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+              example:
+                data:
+                - id: mercury-2
+                  name: 'Inception: Mercury 2'
+                  created: 1745798400
+                  description: Mercury 2 diffusion language model for chat completions.
+                  input_modalities:
+                  - text
+                  output_modalities:
+                  - text
+                  context_length: 128000
+                  max_output_length: 50000
+                  pricing:
+                    prompt: '0.00000025'
+                    completion: '0.00000075'
+                    input_cache_reads: '0.000000025'
+                    input_cache_writes: '0'
+                  supported_sampling_parameters:
+                  - temperature
+                  - stop
+                  supported_features:
+                  - tools
+                  - json_mode
+                  - structured_outputs
+                  openrouter:
+                    slug: inception/mercury-2
+                  datacenters:
+                  - country_code: US
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - Models
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nmodels = client.models.list_chat()\nprint(models)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst models = await client.models.listChat();\nconsole.log(models);"
+  /v1/fim/completions/models:
+    get:
+      summary: List FIM models
+      description: List models available for fill-in-the-middle completions.
+      operationId: listFIMModels
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+              example:
+                data:
+                - id: mercury-edit-2
+                  name: 'Inception: Mercury Edit 2'
+                  created: 1745798400
+                  description: Mercury Edit 2 for code edit completions and fill-in-the-middle code completions.
+                  input_modalities:
+                  - text
+                  output_modalities:
+                  - text
+                  context_length: 128000
+                  max_output_length: 32000
+                  pricing:
+                    prompt: '0.00000025'
+                    completion: '0.00000075'
+                    input_cache_reads: '0.000000025'
+                    input_cache_writes: '0'
+                  supported_sampling_parameters:
+                  - temperature
+                  - stop
+                  supported_features: []
+                  openrouter:
+                    slug: inception/mercury-edit-2
+                  datacenters:
+                  - country_code: US
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - Models
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nmodels = client.models.list_fim()\nprint(models)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst models = await client.models.listFim();\nconsole.log(models);"
+  /v1/edit/completions/models:
+    get:
+      summary: List Edit models
+      description: List models available for edit completions.
+      operationId: listEditModels
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsResponse'
+              example:
+                data:
+                - id: mercury-edit-2
+                  name: 'Inception: Mercury Edit 2'
+                  created: 1745798400
+                  description: Mercury Edit 2 for code edit completions and fill-in-the-middle code completions.
+                  input_modalities:
+                  - text
+                  output_modalities:
+                  - text
+                  context_length: 128000
+                  max_output_length: 32000
+                  pricing:
+                    prompt: '0.00000025'
+                    completion: '0.00000075'
+                    input_cache_reads: '0.000000025'
+                    input_cache_writes: '0'
+                  supported_sampling_parameters:
+                  - temperature
+                  - stop
+                  supported_features: []
+                  openrouter:
+                    slug: inception/mercury-edit-2
+                  datacenters:
+                  - country_code: US
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - Models
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nmodels = client.models.list_edit()\nprint(models)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst models = await client.models.listEdit();\nconsole.log(models);"
+components:
+  schemas:
+    PricingInfo:
+      properties:
+        prompt:
+          type: string
+          title: Prompt
+          description: Pricing per 1 token for input.
+        completion:
+          type: string
+          title: Completion
+          description: Pricing per 1 token for output.
+        input_cache_reads:
+          type: string
+          title: Input Cache Reads
+          description: Pricing per 1 token for cache reads.
+          default: '0'
+        input_cache_writes:
+          type: string
+          title: Input Cache Writes
+          description: Pricing per 1 token for cache writes.
+          default: '0'
+      type: object
+      required:
+      - prompt
+      - completion
+      title: PricingInfo
+      description: Pricing information for a model.
+    ModelsResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/ModelObject'
+          type: array
+          title: Data
+      type: object
+      required:
+      - data
+      title: ModelsResponse
+      description: Response model for models endpoint.
+      example:
+        data:
+        - id: mercury-2
+          name: 'Inception: Mercury 2'
+          created: 1745798400
+          description: Mercury 2 diffusion language model for chat completions.
+          input_modalities:
+          - text
+          output_modalities:
+          - text
+          context_length: 128000
+          max_output_length: 50000
+          pricing:
+            prompt: '0.00000025'
+            completion: '0.00000075'
+            input_cache_reads: '0.000000025'
+            input_cache_writes: '0'
+          supported_sampling_parameters:
+          - temperature
+          - stop
+          supported_features:
+          - tools
+          - json_mode
+          - structured_outputs
+          openrouter:
+            slug: inception/mercury-2
+          datacenters:
+          - country_code: US
+    OpenRouterInfo:
+      properties:
+        slug:
+          type: string
+          title: Slug
+          description: OpenRouter slug for the model.
+      type: object
+      required:
+      - slug
+      title: OpenRouterInfo
+      description: Optional OpenRouter-specific information.
+    ErrorResponse:
+      type: object
+      title: ErrorResponse
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorObject'
+      example:
+        error:
+          message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+          type: invalid_request_error
+          param: messages
+          code: context_length_exceeded
+    ModelObject:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Unique identifier for the model.
+        name:
+          type: string
+          title: Name
+          description: Display name for the model.
+        created:
+          type: integer
+          title: Created
+          description: Unix timestamp when model was created.
+        input_modalities:
+          items:
+            type: string
+          type: array
+          title: Input Modalities
+          description: Supported input modalities.
+        output_modalities:
+          items:
+            type: string
+          type: array
+          title: Output Modalities
+          description: Supported output modalities.
+        context_length:
+          type: integer
+          title: Context Length
+          description: Maximum context length in tokens.
+        max_output_length:
+          type: integer
+          title: Max Output Length
+          description: Maximum output length in tokens.
+        pricing:
+          $ref: '#/components/schemas/PricingInfo'
+          description: Pricing information.
+        supported_sampling_parameters:
+          items:
+            type: string
+          type: array
+          title: Supported Sampling Parameters
+          description: Supported sampling parameters.
+        supported_features:
+          items:
+            type: string
+          type: array
+          title: Supported Features
+          description: Supported model features.
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Model description.
+        openrouter:
+          anyOf:
+          - $ref: '#/components/schemas/OpenRouterInfo'
+          - type: 'null'
+          description: OpenRouter-specific metadata.
+        datacenters:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/DataCenter'
+            type: array
+          - type: 'null'
+          title: Datacenters
+          description: Available datacenters.
+      type: object
+      required:
+      - id
+      - name
+      - created
+      - input_modalities
+      - output_modalities
+      - context_length
+      - max_output_length
+      - pricing
+      - supported_sampling_parameters
+      - supported_features
+      title: ModelObject
+      description: Model information object.
+    DataCenter:
+      properties:
+        country_code:
+          type: string
+          title: Country Code
+          description: ISO 3166 Alpha-2 country code.
+      type: object
+      required:
+      - country_code
+      title: DataCenter
+      description: Datacenter location information.
+    ErrorObject:
+      type: object
+      title: ErrorObject
+      required:
+      - message
+      - type
+      properties:
+        message:
+          type: string
+          description: Human-readable error message.
+        type:
+          type: string
+          description: Error category, e.g. `invalid_request_error`, `rate_limit_error`.
+        param:
+          type:
+          - string
+          - 'null'
+          description: Offending parameter, if applicable.
+        code:
+          type:
+          - string
+          - 'null'
+          description: Machine-readable error code.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'API key provided as a Bearer token: `Authorization: Bearer <api_key>`. Get an API key at https://platform.inceptionlabs.ai.'

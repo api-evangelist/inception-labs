@@ -1,0 +1,450 @@
+openapi: 3.1.0
+info:
+  title: Inception Chat FIM API
+  version: 1.0.0
+  description: Inception Labs LLM API — chat, FIM, and edit completions powered by Mercury diffusion language models. OpenAI-compatible request/response shapes with extensions for diffusion-specific features.
+  contact:
+    name: Inception Labs
+    url: https://docs.inceptionlabs.ai
+    email: support@inceptionlabs.ai
+  license:
+    name: Proprietary
+  x-logo:
+    url: https://docs.inceptionlabs.ai/logo.png
+servers:
+- url: https://api.inceptionlabs.ai
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: FIM
+  description: Fill-in-the-middle code completion endpoints.
+paths:
+  /v1/fim/completions:
+    post:
+      summary: Create a fill-in-the-middle completion
+      description: Generate a code completion given a `prompt` (prefix) and optional `suffix`. Designed for IDE-style inline completion. Returns a `FimCompletion` object, or a server-sent events stream of `FimCompletionChunk` deltas when `stream=true`. Tool calling and function calling are not supported.
+      operationId: createFimCompletion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FIMCompletionRequest'
+            example:
+              model: mercury-edit-2
+              prompt: "def fibonacci(n: int) -> int:\n    if n <= 1:\n        return n\n    return "
+              suffix: '
+
+
+                print(fibonacci(10))
+
+                '
+              max_tokens: 256
+        required: true
+      responses:
+        '200':
+          description: 'Successful response. Returns a JSON object when `stream=false`, or a server-sent events stream of `TextCompletionChunk` objects (terminated by `data: [DONE]`) when `stream=true`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FIMCompletionResponse'
+              example:
+                id: cmpl-7a2b3c4d5e
+                object: text_completion
+                created: 1745798400
+                model: mercury-edit-2
+                choices:
+                - index: 0
+                  finish_reason: stop
+                  text: fibonacci(n - 1) + fibonacci(n - 2)
+                usage:
+                  prompt_tokens: 24
+                  completion_tokens: 14
+                  total_tokens: 38
+                  reasoning_tokens: 0
+                  cached_input_tokens: 0
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/TextCompletionChunk'
+              x-stainless-stream-type: sse
+              x-stainless-stream-event-schema:
+                $ref: '#/components/schemas/TextCompletionChunk'
+              x-stainless-stream-terminator: '[DONE]'
+        '400':
+          description: Bad Request — invalid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+                  type: invalid_request_error
+                  param: messages
+                  code: context_length_exceeded
+        '401':
+          description: Unauthorized — missing or invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Incorrect API key provided
+                  type: authentication_error
+                  param: null
+                  code: invalid_api_key
+        '402':
+          description: Payment Required — billing inactive or quota exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Account is inactive
+                  type: account_error
+                  param: null
+                  code: account_error
+        '404':
+          description: Not Found — model not available for this account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: model `jupyter-2` not found
+                  type: invalid_request_error
+                  param: model
+                  code: model_not_found
+        '429':
+          description: Too Many Requests — rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: Rate limit exceeded. Please try again later.
+                  type: rate_limit_error
+                  param: null
+                  code: rate_limit_reached
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  message: The server had an error while processing your request.
+                  type: server_error
+                  param: null
+                  code: server_error
+      security:
+      - BearerAuth: []
+      tags:
+      - FIM
+      x-codeSamples:
+      - lang: python
+        label: Python
+        source: "import os\nfrom inceptionai import Inception\n\nclient = Inception(\n    api_key=os.environ.get(\"INCEPTION_API_KEY\"),  # defaults to this env var; can be omitted\n)\n\nfim_completion = client.fim.completions.create(\n    model=\"mercury-edit-2\",\n    prompt=\"def fibonacci(n: int) -> int:\\n    if n <= 1:\\n        return n\\n    return \",\n    suffix=\"\\n\\nprint(fibonacci(10))\\n\",\n    max_tokens=256,\n)\nprint(fim_completion)"
+      - lang: typescript
+        label: TypeScript
+        source: "import Inception from 'inceptionai';\n\nconst client = new Inception({\n  apiKey: process.env['INCEPTION_API_KEY'], // defaults to this env var; can be omitted\n});\n\nconst fimCompletion = await client.fim.completions.create({\n  model: 'mercury-edit-2',\n  prompt: 'def fibonacci(n: int) -> int:\\n    if n <= 1:\\n        return n\\n    return ',\n  suffix: '\\n\\nprint(fibonacci(10))\\n',\n  max_tokens: 256\n});\nconsole.log(fimCompletion);"
+components:
+  schemas:
+    FIMUsage:
+      properties:
+        prompt_tokens:
+          type: integer
+          title: Prompt Tokens
+        reasoning_tokens:
+          type: integer
+          title: Reasoning Tokens
+        completion_tokens:
+          type: integer
+          title: Completion Tokens
+        total_tokens:
+          type: integer
+          title: Total Tokens
+        cached_input_tokens:
+          type: integer
+          title: Cached Input Tokens
+      type: object
+      required:
+      - prompt_tokens
+      - reasoning_tokens
+      - completion_tokens
+      - total_tokens
+      - cached_input_tokens
+      title: FIMUsage
+      description: Usage for FIM completions.
+    TextChunkChoice:
+      description: Represents a choice in a streaming text completion response chunk.
+      properties:
+        index:
+          title: Index
+          type: integer
+        text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: null
+          description: The text in this chunk.
+          title: Text
+        finish_reason:
+          type:
+          - string
+          - 'null'
+          enum:
+          - stop
+          - length
+          - content_filter
+          - null
+          description: The reason the model stopped generating tokens.
+      required:
+      - index
+      title: TextChunkChoice
+      type: object
+    FIMCompletionRequest:
+      properties:
+        prompt:
+          type: string
+          title: Prompt
+          description: The prompt to complete.
+        suffix:
+          type: string
+          title: Suffix
+          description: The suffix to complete.
+        model:
+          type: string
+          title: Model
+          description: The model to use for the FIM completion.
+        max_tokens:
+          type: integer
+          title: Max Tokens
+          description: Maximum number of tokens to generate.
+          default: 512
+          minimum: 1
+          maximum: 8192
+        top_p:
+          type: number
+          title: Top P
+          description: Float that controls the cumulative probability of the top tokens to consider.
+          default: 1.0
+          minimum: 0.0
+          maximum: 1.0
+        top_k:
+          type: integer
+          title: Top K
+          description: Limits sampling to the `k` most likely tokens. Must be `-1` (disables the cutoff and considers all tokens) or an integer from 1 to 1000; other values such as 0 are rejected.
+          default: -1
+          minimum: -1
+          maximum: 1000
+        frequency_penalty:
+          type: number
+          title: Frequency Penalty
+          description: Number between -2 and 2. Positive values penalize tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+          default: 0.0
+          minimum: -2.0
+          maximum: 2.0
+        presence_penalty:
+          type: number
+          title: Presence Penalty
+          description: Number between -2 and 2. Positive values penalize tokens based on whether they have appeared in the text so far, increasing the model's likelihood to talk about new topics.
+          default: 1.5
+          minimum: -2.0
+          maximum: 2.0
+        repetition_penalty:
+          type: number
+          title: Repetition Penalty
+          description: Penalizes tokens that have already appeared in the generated text. Must be greater than 0. Values greater than 1.0 discourage repetition; 1.0 applies no penalty.
+          default: 1.0
+          minimum: 0
+        stop:
+          items:
+            type: string
+          type: array
+          title: Stop
+          description: A list of sequences where the API will stop generating further tokens. The returned text will not contain the stop sequences. Defaults to common code-block boundaries.
+          default:
+          - '
+
+
+            '
+          - "\n \n"
+        stream:
+          type: boolean
+          title: Stream
+          description: Whether to stream the response.
+          default: false
+        stream_options:
+          $ref: '#/components/schemas/StreamOptions'
+          description: Options that control streaming behavior.
+      type: object
+      required:
+      - prompt
+      - model
+      title: FIMCompletionRequest
+    ErrorResponse:
+      type: object
+      title: ErrorResponse
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorObject'
+      example:
+        error:
+          message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+          type: invalid_request_error
+          param: messages
+          code: context_length_exceeded
+    FIMCompletionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: text_completion
+          title: Object
+          default: text_completion
+        created:
+          type: integer
+          title: Created
+        model:
+          type: string
+          title: Model
+        choices:
+          items:
+            $ref: '#/components/schemas/TextCompletionChoice'
+          type: array
+          title: Choices
+        usage:
+          $ref: '#/components/schemas/FIMUsage'
+        warning:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Warning
+      type: object
+      required:
+      - id
+      - created
+      - model
+      - choices
+      - usage
+      - object
+      title: FIMCompletionResponse
+      example:
+        id: cmpl-7a2b3c4d5e
+        object: text_completion
+        created: 1745798400
+        model: mercury-edit-2
+        choices:
+        - index: 0
+          finish_reason: stop
+          text: fibonacci(n - 1) + fibonacci(n - 2)
+        usage:
+          prompt_tokens: 24
+          completion_tokens: 14
+          total_tokens: 38
+          reasoning_tokens: 0
+          cached_input_tokens: 0
+    TextCompletionChoice:
+      properties:
+        index:
+          type: integer
+          title: Index
+        text:
+          type: string
+          title: Text
+        finish_reason:
+          type:
+          - string
+          - 'null'
+          enum:
+          - stop
+          - length
+          - content_filter
+          - null
+          description: The reason the model stopped generating tokens.
+      type: object
+      required:
+      - index
+      - text
+      - finish_reason
+      title: TextCompletionChoice
+      description: Choice for FIM completions.
+    TextCompletionChunk:
+      description: Model for a single chunk in a streaming text completion response.
+      properties:
+        id:
+          title: Id
+          type: string
+        object:
+          const: text_completion
+          default: text_completion
+          title: Object
+          type: string
+        created:
+          title: Created
+          type: integer
+        model:
+          title: Model
+          type: string
+        choices:
+          items:
+            $ref: '#/components/schemas/TextChunkChoice'
+          title: Choices
+          type: array
+      required:
+      - id
+      - created
+      - model
+      - choices
+      - object
+      title: TextCompletionChunk
+      type: object
+    StreamOptions:
+      properties:
+        include_usage:
+          type: boolean
+          title: Include Usage
+          description: 'If true, an additional chunk is streamed before the `data: [DONE]` message containing the token usage statistics for the entire request. Inside that chunk, `choices` is an empty array and the `usage` field is populated.'
+          default: false
+      type: object
+      title: StreamOptions
+      description: Options for controlling streaming behavior. Only used when `stream=true`.
+      required: []
+    ErrorObject:
+      type: object
+      title: ErrorObject
+      required:
+      - message
+      - type
+      properties:
+        message:
+          type: string
+          description: Human-readable error message.
+        type:
+          type: string
+          description: Error category, e.g. `invalid_request_error`, `rate_limit_error`.
+        param:
+          type:
+          - string
+          - 'null'
+          description: Offending parameter, if applicable.
+        code:
+          type:
+          - string
+          - 'null'
+          description: Machine-readable error code.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: 'API key provided as a Bearer token: `Authorization: Bearer <api_key>`. Get an API key at https://platform.inceptionlabs.ai.'
