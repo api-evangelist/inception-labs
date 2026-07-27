@@ -1,0 +1,19 @@
+generated: '2026-07-19'
+method: generated
+api: openapi/inception-labs-openapi-original.json
+skills:
+  - file: inception-labs-chat-completion.md
+    name: Chat with Mercury 2
+    operations: [listChatModels, createChatCompletion]
+  - file: inception-labs-structured-output.md
+    name: Get structured JSON output from Mercury 2
+    operations: [createChatCompletion]
+  - file: inception-labs-tool-use.md
+    name: Tool calling with Mercury 2
+    operations: [createChatCompletion]
+  - file: inception-labs-code-autocomplete.md
+    name: Inline code autocomplete (FIM)
+    operations: [listFIMModels, createFimCompletion]
+  - file: inception-labs-code-edit.md
+    name: Apply a code edit (Next Edit)
+    operations: [listEditModels, createEditCompletion]

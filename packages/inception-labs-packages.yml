@@ -1,0 +1,27 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.inceptionlabs.ai/get-started/sdks
+packages:
+  - language: python
+    registry: pypi
+    name: inceptionai
+    version: 0.1.3
+    url: https://pypi.org/project/inceptionai/
+    repo: https://github.com/inception-ai-inc/inceptionai-python
+    install: pip install inceptionai
+    summary: The official Python library for the Inception API.
+    official: true
+  - language: typescript
+    registry: npm
+    name: inceptionai
+    url: https://www.npmjs.com/package/inceptionai
+    repo: https://github.com/inception-ai-inc/inceptionai-typescript
+    install: npm install inceptionai
+    summary: The official TypeScript library for the Inception API.
+    official: true
+notes: >-
+  The Inception API is OpenAI-compatible, so the official OpenAI Python/Node SDKs
+  and OpenAI-compatible clients (LiteLLM, LangChain, AISuite, Vercel AI SDK
+  @ai-sdk/openai-compatible) also work by pointing base_url at
+  https://api.inceptionlabs.ai/v1. Only the two `inceptionai` libraries above are
+  first-party.

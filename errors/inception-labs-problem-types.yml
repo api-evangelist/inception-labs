@@ -1,0 +1,58 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+format: openai-error-envelope
+envelope:
+  shape: '{"error": {"message": string, "type": string, "param": string|null, "code": string|null}}'
+  fields:
+    message: Human-readable error message.
+    type: Error category, e.g. invalid_request_error, rate_limit_error.
+    param: Offending parameter, if applicable.
+    code: Machine-readable error code (e.g. context_length_exceeded).
+  example:
+    error:
+      message: You exceeded the maximum context length for this model of 128000. Please reduce the length of the messages or completion.
+      type: invalid_request_error
+      param: messages
+      code: context_length_exceeded
+docs: https://docs.inceptionlabs.ai/resources/error-codes
+problems:
+  - status: 400
+    title: Bad Request — invalid parameters
+    type: invalid_request_error
+    remediation: Check request parameters (messages, model, response_format, etc.); reduce input if context length is exceeded.
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion
+      - openapi/inception-labs-openapi-original.json#createFimCompletion
+      - openapi/inception-labs-openapi-original.json#createEditCompletion
+  - status: 401
+    title: Unauthorized — missing or invalid API key
+    type: authentication_error
+    remediation: "Provide a valid API key as `Authorization: Bearer <api_key>`. Generate keys at https://platform.inceptionlabs.ai."
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion
+      - openapi/inception-labs-openapi-original.json#listModels
+  - status: 402
+    title: Payment Required — billing inactive or quota exceeded
+    type: billing_error
+    remediation: Activate a billing plan or increase quota in the Inception Platform dashboard; the free tier grants 10M tokens.
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion
+  - status: 404
+    title: Not Found — model not available for this account
+    type: invalid_request_error
+    remediation: Request a model your account has access to; list available models via GET /v1/models.
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion
+  - status: 429
+    title: Too Many Requests — rate limit exceeded
+    type: rate_limit_error
+    remediation: Back off and retry; per-minute request and token limits vary by tier (Free / Pay As You Go / Enterprise).
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion
+  - status: 500
+    title: Internal Server Error
+    type: api_error
+    remediation: Retry with exponential backoff; if persistent, contact support@inceptionlabs.ai.
+    source_operations:
+      - openapi/inception-labs-openapi-original.json#createChatCompletion

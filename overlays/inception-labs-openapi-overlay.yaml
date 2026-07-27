@@ -1,0 +1,25 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Inception API
+  version: 1.0.0
+extends: openapi/inception-labs-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-rating: 4
+      x-apievangelist-notes: >-
+        OpenAI-compatible diffusion-LLM API (Mercury 2 / Mercury Edit 2). Bearer
+        API-key auth, SSE streaming, structured outputs, tool calling. No
+        idempotency contract, no webhook/event surface, no OAuth scopes.
+      x-api-evangelist-category: artificial-intelligence
+  - target: $.info
+    update:
+      x-artifacts:
+        authentication: authentication/inception-labs-authentication.yml
+        conventions: conventions/inception-labs-conventions.yml
+        errors: errors/inception-labs-problem-types.yml
+        agentic-access: agentic-access/inception-labs-agentic-access.yml
+  - target: $.paths['/v1/chat/completions'].post
+    update:
+      x-apievangelist-marquee: true
+      x-apievangelist-notes: Primary conversational endpoint; supports reasoning_effort (including "instant"), tools, and response_format structured outputs.

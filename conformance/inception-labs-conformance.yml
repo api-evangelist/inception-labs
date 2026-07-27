@@ -1,0 +1,27 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+standards:
+  - id: openapi-3.1
+    conforms: true
+    evidence: openapi field is 3.1.0
+  - id: openai-chat-completions-compatible
+    conforms: true
+    evidence: >-
+      Request/response shapes mirror the OpenAI Chat Completions API; documented
+      as a drop-in OpenAI-compatible interface. /v1/chat/completions,
+      /v1/models, and Bearer auth match OpenAI conventions.
+  - id: sse-streaming
+    conforms: true
+    evidence: 200 responses offer text/event-stream with data-[DONE]-terminated ChatCompletionChunk deltas when stream=true
+  - id: oauth2
+    conforms: false
+    evidence: only http bearer (static API key) security scheme; no oauth2 flows
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: errors use an OpenAI-style {"error":{message,type,param,code}} envelope, not application/problem+json
+  - id: json-schema-structured-output
+    conforms: true
+    evidence: response_format supports json_schema (ResponseFormatJSONSchema) for constrained structured outputs

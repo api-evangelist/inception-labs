@@ -1,0 +1,46 @@
+# Inception Platform
+
+## Docs
+
+- [Create a chat completion](https://docs.inceptionlabs.ai/api-reference/chat/create-a-chat-completion.md): Generate a chat completion from a sequence of messages. Returns a `ChatCompletion` object, or a server-sent events stream of `ChatCompletionChunk` deltas when `stream=true`. Supports tool calling, structured output via `response_format`, and reasoning controls.
+- [Create a code edit completion](https://docs.inceptionlabs.ai/api-reference/edit/create-a-code-edit-completion.md): Generate an edit to a code region given the surrounding context. The request must contain a single user message whose content includes the required edit prompt tags (e.g. `<|code_to_edit|>`, `<|cursor|>`, `<|current_file_content|>`). Returns an `EditCompletion` object. Streaming and tool calling are…
+- [Create a fill-in-the-middle completion](https://docs.inceptionlabs.ai/api-reference/fim/create-a-fill-in-the-middle-completion.md): Generate a code completion given a `prompt` (prefix) and optional `suffix`. Designed for IDE-style inline completion. Returns a `FimCompletion` object, or a server-sent events stream of `FimCompletionChunk` deltas when `stream=true`. Tool calling and function calling are not supported.
+- [List available models](https://docs.inceptionlabs.ai/api-reference/models/list-available-models.md): List the models currently available through the API.
+- [List chat models](https://docs.inceptionlabs.ai/api-reference/models/list-chat-models.md): List models available for chat completions.
+- [List Edit models](https://docs.inceptionlabs.ai/api-reference/models/list-edit-models.md): List models available for edit completions.
+- [List FIM models](https://docs.inceptionlabs.ai/api-reference/models/list-fim-models.md): List models available for fill-in-the-middle completions.
+- [Chat Completions](https://docs.inceptionlabs.ai/capabilities/chat-completions.md): Send chat completion requests to the Inception API to generate conversational responses from Mercury 2 with adjustable reasoning effort and streaming.
+- [Autocomplete (FIM)](https://docs.inceptionlabs.ai/capabilities/fim.md): Generate inline code autocomplete suggestions with the Inception fill-in-the-middle (FIM) endpoint, powered by the Mercury Edit 2 code model.
+- [Instant](https://docs.inceptionlabs.ai/capabilities/instant.md): Set reasoning_effort to instant for near-realtime responses from Mercury 2 — ideal for voice assistants and low-latency turns that don't require tool calling.
+- [Next Edit](https://docs.inceptionlabs.ai/capabilities/next-edit.md): Predict a developer's next code edit with the Inception Next Edit endpoint and Mercury Edit 2 using recent snippets, file context, and edit history.
+- [Streaming & Diffusion](https://docs.inceptionlabs.ai/capabilities/streaming.md): Stream Mercury 2 chat completions or enable the diffusion mode to visualize how the model iteratively denoises text into the final answer.
+- [Structured Outputs](https://docs.inceptionlabs.ai/capabilities/structured-outputs.md): Constrain Mercury 2 chat completions to a JSON schema using structured outputs, so your application receives strictly typed, machine-parseable responses.
+- [Tool Use](https://docs.inceptionlabs.ai/capabilities/tool-use.md): Use tool calling on the Mercury 2 chat completions endpoint to let the model invoke functions, fetch data, and orchestrate multi-step agent workflows.
+- [Realtime Voice Assistant: Mercury + ElevenLabs](https://docs.inceptionlabs.ai/elevenlabs-agent.md): Stream Mercury 2 in ElevenLabs for a low-latency voice assistant.
+- [ElevenLabs](https://docs.inceptionlabs.ai/elevenlabs-notebook.md): Wire Mercury 2 into the ElevenLabs Agents platform as a custom LLM.
+- [Authentication](https://docs.inceptionlabs.ai/get-started/authentication.md): Generate API keys in the Inception Platform dashboard.
+- [Welcome to the Inception Platform](https://docs.inceptionlabs.ai/get-started/get-started.md): Create an Inception account, generate an API key, and send your first request to Mercury 2 using the OpenAI-compatible REST API or client libraries.
+- [Models, Endpoints, and Pricing](https://docs.inceptionlabs.ai/get-started/models.md): Compare Inception models including Mercury 2 and Mercury Edit 2.
+- [Rate Limits](https://docs.inceptionlabs.ai/get-started/rate-limits.md): Per-minute request, input token, and output token rate limits for the Inception API across the Free, Pay As You Go, and Enterprise tiers.
+- [SDKs](https://docs.inceptionlabs.ai/get-started/sdks.md): Official Python and TypeScript client libraries for the Inception API.
+- [Natural Language SQL Agent: Mercury + Tool Calling](https://docs.inceptionlabs.ai/natural-language-sql-agent-mercury-tool-calling.md): Build a natural language SQL agent that uses Mercury 2.
+- [Inception Chat](https://docs.inceptionlabs.ai/resources/chat.md)
+- [Cursor](https://docs.inceptionlabs.ai/resources/cursor.md): Set up Cursor to use Mercury 2.
+- [Error Codes](https://docs.inceptionlabs.ai/resources/error-codes.md): Reference for HTTP status codes returned by the Inception API.
+- [Frequently Asked Questions](https://docs.inceptionlabs.ai/resources/faq.md): Answers to common questions about the Inception API.
+- [Kilo Code](https://docs.inceptionlabs.ai/resources/kilo-code.md): Set up the Kilo Code VS Code extension to use Mercury 2.
+- [LangChain](https://docs.inceptionlabs.ai/resources/langchain.md): Call Mercury 2 from LangChain.
+- [OpenClaw 🦞 ](https://docs.inceptionlabs.ai/resources/open-claw.md): Configure OpenClaw to use Mercury 2.
+- [OpenCode](https://docs.inceptionlabs.ai/resources/opencode.md): Connect OpenCode to the Inception API.
+- [Prompt Guide](https://docs.inceptionlabs.ai/resources/prompt-guide.md): Practical prompting techniques for Mercury 2 across voice, tool-calling, search, and code agents.
+- [Roo Code](https://docs.inceptionlabs.ai/resources/roo-code.md): Configure the Roo Code VS Code extension to use Mercury 2.
+- [Vapi](https://docs.inceptionlabs.ai/resources/vapi.md): Build a low-latency voice agent in Vapi using Mercury 2.
+- [Zed](https://docs.inceptionlabs.ai/resources/zed.md): Configure the Zed editor's Edit Predictions feature with your Inception API key to receive next-edit suggestions powered by Mercury Edit 2.
+- [Privacy Policy](https://docs.inceptionlabs.ai/support/privacy.md)
+- [Contact Support](https://docs.inceptionlabs.ai/support/support.md)
+- [Terms of Use](https://docs.inceptionlabs.ai/support/tou.md)
+- [Quickstart](https://docs.inceptionlabs.ai/usecases/voice/quickstart.md): Get started with Mercury 2 for voice applications.
+
+## OpenAPI Specs
+
+- [openapi](https://api.inceptionlabs.ai/openapi.json)

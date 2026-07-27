@@ -1,0 +1,41 @@
+arazzo: 1.0.1
+info:
+  title: Inception — discover a chat model and generate a completion
+  version: 1.0.0
+  summary: List the available Mercury chat models, then send a chat completion.
+sourceDescriptions:
+  - name: inceptionApi
+    url: ../openapi/inception-labs-openapi-original.json
+    type: openapi
+workflows:
+  - workflowId: chatCompletion
+    summary: Confirm a chat model then generate a Mercury 2 chat completion.
+    inputs:
+      type: object
+      properties:
+        prompt:
+          type: string
+          default: Say hello in one sentence.
+        model:
+          type: string
+          default: mercury-2
+    steps:
+      - stepId: listChatModels
+        operationId: listChatModels
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: createChatCompletion
+        operationId: createChatCompletion
+        requestBody:
+          contentType: application/json
+          payload:
+            model: $inputs.model
+            messages:
+              - role: user
+                content: $inputs.prompt
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          content: $response.body#/choices/0/message/content
+    outputs:
+      content: $steps.createChatCompletion.outputs.content

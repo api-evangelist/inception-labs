@@ -1,0 +1,25 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://docs.inceptionlabs.ai/get-started/get-started
+model_lifecycle:
+  note: >-
+    Model generations are versioned by model id (mercury-2, mercury-edit-2).
+    "Mercury 1 remains supported for existing customers" per the models page —
+    superseded generations stay available rather than being hard-sunset.
+  current_models:
+    - mercury-2
+    - mercury-edit-2
+  legacy_models:
+    - mercury-1
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No formal RFC 8594 Sunset/Deprecation-header policy is published for the API.
+status_page: null
+sla:
+  note: Enterprise deployments advertise 99.5%+ uptime and custom SLAs (AWS Bedrock / Azure Foundry). No public status page or SLA URL found.
+deprecated_operations: []

@@ -1,0 +1,62 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+note: >-
+  This is an LLM inference API, not a resource CRUD API — the "entities" are
+  request/response message shapes rather than persistent objects with ids. The
+  graph below captures the schema composition ($ref usage) from the OpenAPI.
+entities:
+  - name: ChatCompletionRequest
+    kind: request
+    key_fields: [model, messages, stream, tools, response_format, reasoning_effort]
+    relationships:
+      - has_many: Message
+        via: messages
+      - has_many: ChatCompletionTool
+        via: tools
+      - has_one: ResponseFormatJSONSchema
+        via: response_format
+  - name: ChatCompletionResponse
+    kind: response
+    key_fields: [id, model, choices, usage]
+    relationships:
+      - has_many: Choice
+        via: choices
+      - has_one: Usage
+        via: usage
+  - name: Choice
+    kind: value
+    relationships:
+      - has_one: Message
+        via: message
+  - name: Message
+    kind: value
+    key_fields: [role, content, tool_calls]
+    relationships:
+      - has_many: ToolCall
+        via: tool_calls
+  - name: ToolCall
+    kind: value
+    relationships:
+      - has_one: FunctionCall
+        via: function
+  - name: FIMCompletionRequest
+    kind: request
+    key_fields: [model, prompt, suffix, stream]
+  - name: EditCompletionRequest
+    kind: request
+    key_fields: [model, messages]
+    relationships:
+      - has_many: EditMessage
+        via: messages
+  - name: ModelsResponse
+    kind: response
+    relationships:
+      - has_many: ModelObject
+        via: data
+  - name: ModelObject
+    kind: entity
+    key_fields: [id, context_length, max_output_length, pricing]
+    relationships:
+      - has_one: PricingInfo
+        via: pricing

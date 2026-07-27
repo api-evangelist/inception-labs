@@ -1,0 +1,43 @@
+arazzo: 1.0.1
+info:
+  title: Inception — fill-in-the-middle code autocomplete
+  version: 1.0.0
+  summary: Confirm a FIM model then generate an inline code completion with Mercury Edit 2.
+sourceDescriptions:
+  - name: inceptionApi
+    url: ../openapi/inception-labs-openapi-original.json
+    type: openapi
+workflows:
+  - workflowId: fimAutocomplete
+    summary: List FIM models, then request a fill-in-the-middle completion.
+    inputs:
+      type: object
+      properties:
+        model:
+          type: string
+          default: mercury-edit-2
+        prompt:
+          type: string
+          default: "def fibonacci(n):\n    "
+        suffix:
+          type: string
+          default: ""
+    steps:
+      - stepId: listFIMModels
+        operationId: listFIMModels
+        successCriteria:
+          - condition: $statusCode == 200
+      - stepId: createFimCompletion
+        operationId: createFimCompletion
+        requestBody:
+          contentType: application/json
+          payload:
+            model: $inputs.model
+            prompt: $inputs.prompt
+            suffix: $inputs.suffix
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          completion: $response.body#/choices/0/text
+    outputs:
+      completion: $steps.createFimCompletion.outputs.completion

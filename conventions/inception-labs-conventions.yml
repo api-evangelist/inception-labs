@@ -1,0 +1,39 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/inception-labs-openapi-original.json
+authentication:
+  style: bearer-api-key
+  header: 'Authorization: Bearer <api_key>'
+  ref: authentication/inception-labs-authentication.yml
+idempotency:
+  supported: false
+  note: No Idempotency-Key header or idempotency contract is documented or present in the OpenAPI. Completions are non-idempotent by nature.
+pagination:
+  supported: false
+  note: List endpoints (/v1/models and per-capability model lists) return full arrays; no pagination parameters.
+streaming:
+  supported: true
+  transport: server-sent-events
+  detail: "Set stream=true to receive text/event-stream deltas (ChatCompletionChunk / TextCompletionChunk), terminated by `data: [DONE]`. A diffusion mode can visualize iterative denoising."
+structured_output:
+  supported: true
+  detail: response_format supports json_object and json_schema (strict, machine-parseable typed responses).
+tool_calling:
+  supported: true
+  detail: Chat completions accept tools[] (function definitions); the model returns tool_calls. FIM and Edit endpoints do not support tool calling.
+reasoning:
+  supported: true
+  param: reasoning_effort
+  values_note: Includes an "instant" setting for near-realtime, low-latency turns (voice) that skips tool calling.
+versioning:
+  style: uri-path
+  current: v1
+  ref: lifecycle/inception-labs-lifecycle.yml
+error_envelope:
+  style: openai-error
+  shape: '{"error": {message, type, param, code}}'
+  ref: errors/inception-labs-problem-types.yml
+rate_limit_signaling:
+  detail: HTTP 429 (rate_limit_error) on exceeding per-minute request/token limits; limits vary by tier (Free / Pay As You Go / Enterprise).
+openai_compatibility:
+  detail: Request/response shapes are OpenAI-compatible; point any OpenAI client's base_url at https://api.inceptionlabs.ai/v1.

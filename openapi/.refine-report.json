@@ -1,0 +1,20 @@
+{
+  "provider": "inception-labs",
+  "sources": [
+    "inception-labs-chat-api-openapi.yml",
+    "inception-labs-edit-api-openapi.yml",
+    "inception-labs-fim-api-openapi.yml",
+    "inception-labs-models-api-openapi.yml"
+  ],
+  "outputs": [
+    "inception-labs-chat-api-openapi.yml",
+    "inception-labs-edit-api-openapi.yml",
+    "inception-labs-fim-api-openapi.yml",
+    "inception-labs-models-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

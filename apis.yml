@@ -1,25 +1,188 @@
 aid: inception-labs
 name: Inception Labs
-description: Inception Labs is a company surfaced as a portfolio company of mayfield and added to the
-  API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Inception Labs builds Mercury, the first family of commercial-scale diffusion
+  large language models (dLLMs) that generate tokens in parallel for 5-10x faster
+  inference than comparable speed-optimized models. The Inception API is an
+  OpenAI-compatible REST interface exposing Mercury 2 (a 128K-context reasoning
+  dLLM) and Mercury Edit 2 (a coding-focused model) through chat,
+  fill-in-the-middle, and code-edit completion endpoints, with server-sent-event
+  streaming, tool calling, structured JSON-schema outputs, and an "instant"
+  low-latency reasoning mode for realtime voice. Founded in 2024 by Stanford
+  professor Stefano Ermon, the company is backed by Mayfield and ships official
+  Python and TypeScript client libraries plus AWS Bedrock and Azure Foundry
+  enterprise deployment.
 url: https://raw.githubusercontent.com/api-evangelist/inception-labs/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://docs.inceptionlabs.ai/logo.png
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - mayfield
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: portfolio-lead-enriched
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
+- Artificial Intelligence
+- Machine Learning
+- Large Language Models
+- Diffusion Models
+- Generative AI
+- Code Completion
+- LLM API
+- OpenAI Compatible
+- Developer Tools
 - Company
-apis: []
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: inception-labs:inception-labs-chat-api
+  name: Inception Labs Chat API
+  description: Chat completion endpoints (OpenAI-compatible).
+  humanURL: https://docs.inceptionlabs.ai/get-started/get-started
+  baseURL: https://api.inceptionlabs.ai/v1
+  tags:
+  - Chat
+  properties:
+  - type: OpenAPI
+    url: openapi/inception-labs-chat-api-openapi.yml
+  - type: DeveloperPortal
+    url: https://platform.inceptionlabs.ai
+  - type: Documentation
+    url: https://docs.inceptionlabs.ai
+  - type: APIReference
+    url: https://docs.inceptionlabs.ai/api-reference
+  - type: GettingStarted
+    url: https://docs.inceptionlabs.ai/get-started/get-started
+- aid: inception-labs:inception-labs-edit-api
+  name: Inception Labs Edit API
+  description: Code edit completion endpoints.
+  humanURL: https://docs.inceptionlabs.ai/get-started/get-started
+  baseURL: https://api.inceptionlabs.ai/v1
+  tags:
+  - Edit
+  properties:
+  - type: OpenAPI
+    url: openapi/inception-labs-edit-api-openapi.yml
+  - type: DeveloperPortal
+    url: https://platform.inceptionlabs.ai
+  - type: Documentation
+    url: https://docs.inceptionlabs.ai
+  - type: APIReference
+    url: https://docs.inceptionlabs.ai/api-reference
+  - type: GettingStarted
+    url: https://docs.inceptionlabs.ai/get-started/get-started
+- aid: inception-labs:inception-labs-fim-api
+  name: Inception Labs FIM API
+  description: Fill-in-the-middle code completion endpoints.
+  humanURL: https://docs.inceptionlabs.ai/get-started/get-started
+  baseURL: https://api.inceptionlabs.ai/v1
+  tags:
+  - FIM
+  properties:
+  - type: OpenAPI
+    url: openapi/inception-labs-fim-api-openapi.yml
+  - type: DeveloperPortal
+    url: https://platform.inceptionlabs.ai
+  - type: Documentation
+    url: https://docs.inceptionlabs.ai
+  - type: APIReference
+    url: https://docs.inceptionlabs.ai/api-reference
+  - type: GettingStarted
+    url: https://docs.inceptionlabs.ai/get-started/get-started
+- aid: inception-labs:inception-labs-models-api
+  name: Inception Labs Models API
+  description: List available models.
+  humanURL: https://docs.inceptionlabs.ai/get-started/get-started
+  baseURL: https://api.inceptionlabs.ai/v1
+  tags:
+  - Models
+  properties:
+  - type: OpenAPI
+    url: openapi/inception-labs-models-api-openapi.yml
+  - type: DeveloperPortal
+    url: https://platform.inceptionlabs.ai
+  - type: Documentation
+    url: https://docs.inceptionlabs.ai
+  - type: APIReference
+    url: https://docs.inceptionlabs.ai/api-reference
+  - type: GettingStarted
+    url: https://docs.inceptionlabs.ai/get-started/get-started
 common:
 - type: Website
   url: https://inceptionlabs.ai
+- type: DeveloperPortal
+  url: https://platform.inceptionlabs.ai
+- type: Documentation
+  url: https://docs.inceptionlabs.ai
+- type: APIReference
+  url: https://docs.inceptionlabs.ai/api-reference
+- type: GettingStarted
+  url: https://docs.inceptionlabs.ai/get-started/get-started
+- type: Blog
+  url: https://www.inceptionlabs.ai/blog
+- type: GitHubOrganization
+  url: https://github.com/inception-ai-inc
+- type: Pricing
+  url: https://www.inceptionlabs.ai/models
+- type: SignUp
+  url: https://platform.inceptionlabs.ai
+- type: Support
+  url: https://docs.inceptionlabs.ai/support/support
+- type: TermsOfService
+  url: https://docs.inceptionlabs.ai/support/tou
+- type: PrivacyPolicy
+  url: https://docs.inceptionlabs.ai/support/privacy
+- type: SDKs
+  url: packages/inception-labs-packages.yml
+- type: Packages
+  url: packages/inception-labs-packages.yml
+- type: Authentication
+  url: authentication/inception-labs-authentication.yml
+- type: Conventions
+  url: conventions/inception-labs-conventions.yml
+- type: ErrorCatalog
+  url: errors/inception-labs-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/inception-labs-lifecycle.yml
+- type: DataModel
+  url: data-model/inception-labs-data-model.yml
+- type: Conformance
+  url: conformance/inception-labs-conformance.yml
+- type: MCPServer
+  url: mcp/inception-labs-mcp.yml
+- type: LLMsTxt
+  url: llms/inception-labs-llms.txt
+- type: AgenticAccess
+  url: agentic-access/inception-labs-agentic-access.yml
+- type: DomainSecurity
+  url: security/inception-labs-domain-security.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Arazzo
+  name: Discover a chat model and generate a completion
+  url: arazzo/inception-labs-chat-completion.arazzo.yml
+- type: Arazzo
+  name: Fill-in-the-middle code autocomplete
+  url: arazzo/inception-labs-code-autocomplete.arazzo.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

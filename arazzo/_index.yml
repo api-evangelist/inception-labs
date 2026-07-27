@@ -1,0 +1,11 @@
+generated: '2026-07-19'
+method: derived
+workflows:
+  - file: inception-labs-chat-completion.arazzo.yml
+    workflowId: chatCompletion
+    title: Discover a chat model and generate a completion
+    summary: List the available Mercury chat models, then send a Mercury 2 chat completion.
+  - file: inception-labs-code-autocomplete.arazzo.yml
+    workflowId: fimAutocomplete
+    title: Fill-in-the-middle code autocomplete
+    summary: Confirm a FIM model then generate an inline code completion with Mercury Edit 2.
