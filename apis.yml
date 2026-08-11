@@ -125,6 +125,8 @@ apis:
   - type: GettingStarted
     url: https://docs.inceptionlabs.ai/get-started/get-started
 common:
+- type: Overlay
+  url: overlays/inception-labs-openapi-overlay.yaml
 - type: Website
   url: https://inceptionlabs.ai
 - type: DeveloperPortal
