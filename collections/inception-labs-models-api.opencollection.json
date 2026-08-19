@@ -1,0 +1,84 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Inception Chat Models API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Models",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available models",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.inceptionlabs.ai/v1/models",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List the models currently available through the API."
+        },
+        {
+          "info": {
+            "name": "List chat models",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.inceptionlabs.ai/v1/chat/completions/models",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List models available for chat completions."
+        },
+        {
+          "info": {
+            "name": "List FIM models",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.inceptionlabs.ai/v1/fim/completions/models",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List models available for fill-in-the-middle completions."
+        },
+        {
+          "info": {
+            "name": "List Edit models",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.inceptionlabs.ai/v1/edit/completions/models",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List models available for edit completions."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
